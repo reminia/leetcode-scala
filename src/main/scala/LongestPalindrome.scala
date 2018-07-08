@@ -58,23 +58,24 @@ object LongestPalindrome extends Test {
       step <- s.indices
       i <- s.indices
       if i + step < s.length
-    }  {
+    } {
       val j = i + step
-      if(step == 0) arr(i)(j) = true
-      else if(step == 1) arr(i)(j) = s(i) == s(j)
-      else arr(i)(j) = arr(i+1)(j-1) && s(i) == s(j)
+      if (step == 0) arr(i)(j) = true
+      else if (step == 1) arr(i)(j) = s(i) == s(j)
+      else arr(i)(j) = arr(i + 1)(j - 1) && s(i) == s(j)
     }
-    val list = for {
+
+    var max = ""
+    for {
       i <- s.indices
-      j <- i until s.length
+      j <- s.indices
       if arr(i)(j)
-    } yield (i, j)
-    if (list.isEmpty) {
-      s
-    } else {
-      val (x, y) = list.maxBy { case (i, j) => j - i }
-      s.substring(x, y + 1)
+    } {
+      if (j - i + 1 > max.length) {
+        max = s.substring(i, j + 1)
+      }
     }
+    max
   }
 
   //center based validation
