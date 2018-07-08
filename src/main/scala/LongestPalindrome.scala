@@ -78,6 +78,24 @@ object LongestPalindrome extends Test {
     max
   }
 
+  //even faster DP
+  def v5(s: String): String = {
+    ""
+  }
+
+  // TLE => same as v1 but use sliding to enumerate string
+  def v6(s: String): String = {
+    val list = for {
+      i <- 1 to s.length
+      str <- s.sliding(i)
+      if isPalindrome(str)
+    } yield str
+    if (s.isEmpty) s
+    else {
+      list.maxBy(_.length)
+    }
+  }
+
   //center based validation
   def v3(s: String): String = {
     val length = s.length
@@ -132,6 +150,13 @@ object LongestPalindrome extends Test {
     v4("a") should be("a")
     v4("") should be("")
     v4("abcba") should be("abcba")
+
+    v6("aba") should be("aba")
+    v6("abcbd") should be("bcb")
+    v6("a") should be("a")
+    v6("") should be("")
+    v6("abcba") should be("abcba")
+
 
   }
 }
