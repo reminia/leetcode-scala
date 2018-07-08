@@ -96,6 +96,20 @@ object LongestPalindrome extends Test {
     }
   }
 
+  // Improve on v6
+  // 1. enumeration begin from longest substring
+  // 2. use view to lazily compute
+  // TLE again
+  def v7(s: String): String = {
+    if (s.isEmpty) s
+    else
+      (for {
+        i <- (s.length to 1 by -1).view
+        str <- s.sliding(i)
+        if isPalindrome(str)
+      } yield str).head
+  }
+
   //center based validation
   def v3(s: String): String = {
     val length = s.length
@@ -157,6 +171,10 @@ object LongestPalindrome extends Test {
     v6("") should be("")
     v6("abcba") should be("abcba")
 
-
+    v7("aba") should be("aba")
+    v7("abcbd") should be("bcb")
+    v7("a") should be("a")
+    v7("") should be("")
+    v7("abcba") should be("abcba")
   }
 }
