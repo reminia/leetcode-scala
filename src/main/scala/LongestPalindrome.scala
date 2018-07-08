@@ -27,6 +27,7 @@ object LongestPalindrome extends Test {
   }
 
   //DP without memorization
+  //dp(i)(j) => whether s(i to j) is palindrome
   def v2(s: String): String = {
     def dp(i: Int, j: Int): Boolean = {
       (i, j) match {
@@ -50,6 +51,7 @@ object LongestPalindrome extends Test {
   }
 
   //DP with memorization
+  // arr(i)(j) => where arr(i)(j) is palindrome
   def v4(s: String): String = {
     val arr = Array.ofDim[Boolean](s.length, s.length)
     for {
