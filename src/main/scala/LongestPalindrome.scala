@@ -41,7 +41,7 @@ object LongestPalindrome extends Test {
       if dp(i, j)
     } yield (i, j)
 
-    if(list.isEmpty) {
+    if (list.isEmpty) {
       s
     } else {
       val (x, y) = list.maxBy { case (i, j) => j - i }
@@ -51,8 +51,28 @@ object LongestPalindrome extends Test {
 
   //DP with memorization
   def v4(s: String): String = {
-
-    ""
+    val arr = Array.ofDim[Boolean](s.length, s.length)
+    for {
+      step <- s.indices
+      i <- s.indices
+      if i + step < s.length
+    }  {
+      val j = i + step
+      if(step == 0) arr(i)(j) = true
+      else if(step == 1) arr(i)(j) = s(i) == s(j)
+      else arr(i)(j) = arr(i+1)(j-1) && s(i) == s(j)
+    }
+    val list = for {
+      i <- s.indices
+      j <- i until s.length
+      if arr(i)(j)
+    } yield (i, j)
+    if (list.isEmpty) {
+      s
+    } else {
+      val (x, y) = list.maxBy { case (i, j) => j - i }
+      s.substring(x, y + 1)
+    }
   }
 
   //center based validation
@@ -102,6 +122,13 @@ object LongestPalindrome extends Test {
     v2("abcbd") should be("bcb")
     v2("a") should be("a")
     v2("") should be("")
+    v2("abcba") should be("abcba")
+
+    v4("aba") should be("aba")
+    v4("abcbd") should be("bcb")
+    v4("a") should be("a")
+    v4("") should be("")
+    v4("abcba") should be("abcba")
 
   }
 }
