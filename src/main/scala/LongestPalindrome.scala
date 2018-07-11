@@ -23,6 +23,7 @@ object LongestPalindrome extends Test {
       else if (s(i) == s(s.length - i - 1)) f(i + 1)
       else false
     }
+
     f(0)
   }
 
@@ -31,11 +32,12 @@ object LongestPalindrome extends Test {
   def v2(s: String): String = {
     def dp(i: Int, j: Int): Boolean = {
       (i, j) match {
-        case _ if i == j     => true
+        case _ if i == j => true
         case _ if j == i + 1 => s(i) == s(j)
-        case _               => dp(i + 1, j - 1) && s(i) == s(j)
+        case _ => dp(i + 1, j - 1) && s(i) == s(j)
       }
     }
+
     val list = for {
       i <- s.indices
       j <- i until s.length
@@ -82,7 +84,14 @@ object LongestPalindrome extends Test {
   // AC
   def v55(s: String): String = {
 
-    lazy val array = LazyArray(s.length -> s.length)(dp)
+    import Ix._
+
+    val bounds = ((0, s.length - 1), (0, s.length - 1))
+
+    lazy val array = listArray(bounds) {
+      range(bounds).map(x => dp(x._1)(x._2))
+    }
+
 
     def len(t: (Int, Int)): Int = t._2 + 1 - t._1
 
@@ -91,12 +100,12 @@ object LongestPalindrome extends Test {
 
     def dp(i: Int)(j: Int): (Int, Int) = {
       (i, j) match {
-        case _ if i == j                     => i -> j
+        case _ if i == j => i -> j
         case _ if j == i + 1 && s(j) == s(i) => i -> j
-        case _ if j == i + 1                 => i -> i
+        case _ if j == i + 1 => i -> i
         case _ =>
-          val res = longest(array(i)(j - 1), array(i + 1)(j))
-          if (len(array(i + 1)(j - 1)) == j - i - 1) {
+          val res = longest(array((i, j - 1)), array((i + 1, j)))
+          if (len(array((i + 1,j - 1))) == j - i - 1) {
             if (s(i) == s(j)) i -> j
             else res
           } else
@@ -124,9 +133,9 @@ object LongestPalindrome extends Test {
 
     def dp(i: Int)(j: Int): String = {
       (i, j) match {
-        case _ if i == j                     => substr(i)(j)
+        case _ if i == j => substr(i)(j)
         case _ if j == i + 1 && s(j) == s(i) => substr(i)(j)
-        case _ if j == i + 1                 => substr(i)(i)
+        case _ if j == i + 1 => substr(i)(i)
         case _ =>
           val res = longest(array(i)(j - 1), array(i + 1)(j))
           if (array(i + 1)(j - 1).length == j - i - 1) {
