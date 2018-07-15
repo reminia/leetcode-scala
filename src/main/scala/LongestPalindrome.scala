@@ -80,18 +80,48 @@ object LongestPalindrome extends Test {
     max
   }
 
+  def v55(s: String): String = {
+
+    lazy val array = LazyArray(s.length -> s.length)(dp)
+
+    def len(t: (Int, Int)): Int = t._2 + 1 - t._1
+
+    def longest(s1: (Int, Int), s2: (Int, Int)): (Int, Int) =
+      if (len(s1) > len(s2)) s1 else s2
+
+    def dp(i: Int)(j: Int): (Int, Int) = {
+      (i, j) match {
+        case _ if i == j => i -> j
+        case _ if j == i + 1 && s(j) == s(i) => i -> j
+        case _ if j == i + 1 => i -> i
+        case _ =>
+          val res = longest(array(i)(j - 1), array(i + 1)(j))
+          if (len(array(i + 1)(j - 1)) == j - i - 1) {
+            if (s(i) == s(j)) i -> j
+            else res
+          } else
+            res
+      }
+    }
+
+    if (s.isEmpty) ""
+    else {
+      val (i, j) = dp(0)(s.length - 1)
+      s.substring(i, j + 1)
+    }
+  }
+
   //dp(i)(j) = longest string start and end index between i and j
   // AC
-  def v55(s: String): String = {
+  def v66(s: String): String = {
 
     import Ix._
 
     val bounds = ((0, s.length - 1), (0, s.length - 1))
 
     lazy val array = listArray(bounds) {
-      range(bounds).map(x => dp(x._1)(x._2))
+      t => dp(t._1)(t._2)
     }
-
 
     def len(t: (Int, Int)): Int = t._2 + 1 - t._1
 
@@ -105,7 +135,7 @@ object LongestPalindrome extends Test {
         case _ if j == i + 1 => i -> i
         case _ =>
           val res = longest(array((i, j - 1)), array((i + 1, j)))
-          if (len(array((i + 1,j - 1))) == j - i - 1) {
+          if (len(array((i + 1, j - 1))) == j - i - 1) {
             if (s(i) == s(j)) i -> j
             else res
           } else
@@ -121,7 +151,7 @@ object LongestPalindrome extends Test {
   }
 
   //dp(i)(j) = longest palindrome between i and j
-  //MLE, so when have v55
+  //MLE, so we have v55
   def v5(s: String): String = {
 
     lazy val array = LazyArray(s.length -> s.length)(dp)
@@ -255,5 +285,11 @@ object LongestPalindrome extends Test {
     v55("a") should be("a")
     v55("") should be("")
     v55("abcba") should be("abcba")
+    v55("babaddtattarrattatddetartrateedredividerb")
+
+    val s = "civilwartestingwhetherthatnaptionoranynartionsoconceivedandsodedicatedcanlongendureWeareqmetonagreatbattlefiemldoftzhatwarWehavecometodedicpateaportionofthatfieldasafinalrestingplaceforthosewhoheregavetheirlivesthatthatnationmightliveItisaltogetherfangandproperthatweshoulddothisButinalargersensewecannotdedicatewecannotconsecratewecannothallowthisgroundThebravelmenlivinganddeadwhostruggledherehaveconsecrateditfaraboveourpoorponwertoaddordetractTgheworldadswfilllittlenotlenorlongrememberwhatwesayherebutitcanneverforgetwhattheydidhereItisforusthelivingrathertobededicatedheretotheulnfinishedworkwhichtheywhofoughtherehavethusfarsonoblyadvancedItisratherforustobeherededicatedtothegreattdafskremainingbeforeusthatfromthesehonoreddeadwetakeincreaseddevotiontothatcauseforwhichtheygavethelastpfullmeasureofdevotionthatweherehighlyresolvethatthesedeadshallnothavediedinvainthatthisnationunsderGodshallhaveanewbirthoffreedomandthatgovernmentofthepeoplebythepeopleforthepeopleshallnotperishfromtheearth"
+
+    time(v55(s))
+    time(v66(s))
   }
 }

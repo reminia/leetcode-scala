@@ -1,11 +1,21 @@
+import scala.collection.mutable
 import scala.language.postfixOps
 import scala.reflect.ClassTag
 
 //array index
 trait Ix[T] {
+  //unsafe
   def range(range: (T, T)): List[T]
 
+  //unsafe
   def index(range: (T, T))(a: T): Int
+}
+
+trait IArray[I, T] {
+  val ix: Ix[I]
+  val bound: (I, I)
+
+  def apply(i: I): T
 }
 
 object Ix {
@@ -43,31 +53,23 @@ object Ix {
 
   def index[T: Ix](range: (T, T))(a: T): Int = implicitly[Ix[T]].index(range)(a)
 
+
+  def listArray[I: Ix, T: ClassTag](bounds: (I, I))(f: I => T): IArray[I, T] = {
+    new IArray[I, T] {
+      val map: mutable.HashMap[I, T] = mutable.HashMap.empty
+
+      override val bound: (I, I) = bounds
+
+      override def apply(i: I): T = {
+        map.getOrElseUpdate(i, f(i))
+      }
+
+      override val ix: Ix[I] = implicitly[Ix[I]]
+    }
+  }
+
   def main(args: Array[String]): Unit = {
     println(index((3, 4))(3))
     println(index((1, 2), (3, 4))((1, 4)))
   }
-
-  def listArray[I<: Ix[I], T: ClassTag](bounds: (I, I))(elems: List[T]): IArray[I, T] = {
-    new IArray[I, T] {
-      val array: Array[T] = elems.toArray
-
-      override val bound: (I, I) = bounds
-
-      override def apply(i: I): T = array(index(bounds)(i)(implicitly[Ix[I]]))
-    }
-  }
-
-  // class IArrayImpl[I <: Ix[I], T] extends IArray[I, T] {
-  //   override val bound: (I, I) = _
-  //   override val f: I => T = _
-  //
-  //   override def apply(i: I): T = ???
-  // }
-
-}
-
-trait IArray[I <: Ix[I], T] {
-  val bound: (I, I)
-  def apply(i: I): T
 }
