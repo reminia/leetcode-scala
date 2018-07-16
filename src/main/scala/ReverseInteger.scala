@@ -1,3 +1,5 @@
+import scala.annotation.tailrec
+
 object ReverseInteger extends Test {
   def reverse(x: Int): Int = {
     try {
@@ -23,7 +25,23 @@ object ReverseInteger extends Test {
   }
 
   def v3(x: Int): Int = {
-    0
+    val pos = Int.MaxValue / 10
+    val neg = Int.MinValue / 10
+
+    @tailrec
+    def f(v: Int, r: Int): Int = {
+      r match {
+        case _ if v == 0                  => r
+        case _ if r > pos                 => 0
+        case _ if r == pos && v % 10 > 7  => 0
+        case _ if r < neg                 => 0
+        case _ if r == neg && v % 10 < -8 => 0
+        case _ =>
+          val pop = v % 10
+          f(v / 10, r * 10 + pop)
+      }
+    }
+    f(x, 0)
   }
 
   def main(args: Array[String]): Unit = {
