@@ -32,13 +32,60 @@ object Atoi extends Test {
 
   }
 
+  def v2(str: String): Int = {
+    def pos(s: String): Int = {
+      if (s.isEmpty) 0
+      else if (s.length < 10) s.toInt
+      else if (s.length > 10) Int.MaxValue
+      else if (s.length == 10 && s < Int.MaxValue.toString) s.toInt
+      else Int.MaxValue
+    }
+    def neg(s: String): Int = {
+      if (s.isEmpty) 0
+      else if (s.length < 10) -s.toInt
+      else if (s.length > 10) Int.MinValue
+      else if (s.length == 10 && s < Int.MinValue.toString.tail) -s.toInt
+      else Int.MinValue
+    }
+
+    def digits(s: String): String = {
+      s.dropWhile(_ == '0').takeWhile(_.isDigit)
+    }
+
+    val s = str.dropWhile(_ == ' ')
+    if (s.isEmpty || s(0) != '+' && s(0) != '-' && !s(0).isDigit)
+      0
+    else {
+      s(0) match {
+        case '+' => pos(digits(s.tail))
+        case '-' => neg(digits(s.tail))
+        case _ =>
+          pos(digits(s))
+      }
+    }
+  }
+
   def main(args: Array[String]): Unit = {
-    atoi("a12") should be(0)
-    atoi(" \t") should be(0)
-    atoi(" 12abc") should be(12)
-    atoi(" -12abc") should be(-12)
-    atoi("-91283472332") should be(Int.MinValue)
-    atoi("2147483649") should be(Int.MaxValue)
+//    atoi("a12") should be(0)
+//    atoi(" \t") should be(0)
+//    atoi("+") should be(0)
+//    atoi("-") should be(0)
+//    atoi(" +12abc") should be(12)
+//    atoi(" 12abc") should be(12)
+//    atoi(" -12abc") should be(-12)
+//    atoi("-91283472332") should be(Int.MinValue)
+//    atoi("2147483649") should be(Int.MaxValue)
+
+    v2("a12") should be(0)
+    v2(" \t") should be(0)
+    v2("+") should be(0)
+    v2("-") should be(0)
+    v2(" +12abc") should be(12)
+    v2(" 12abc") should be(12)
+    v2(" -12abc") should be(-12)
+    v2("-91283472332") should be(Int.MinValue)
+    v2("2147483649") should be(Int.MaxValue)
+    v2("000123") should be(123)
   }
 
 }
