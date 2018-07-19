@@ -1,3 +1,4 @@
+import scala.annotation.tailrec
 import scala.collection.mutable
 
 object TwoSum extends Test {
@@ -40,11 +41,27 @@ object TwoSum extends Test {
     Array(0, 0)
   }
 
+  // one pass hash table without use  any return
+  def v4(nums: Array[Int], target: Int): Array[Int] = {
+    @tailrec
+    def go(i: Int, map: Map[Int, Int]): Array[Int] = {
+      if (map.contains(target - nums(i))) {
+        Array(map(target - nums(i)), i)
+      } else {
+        go(i + 1, map + (nums(i) -> i))
+      }
+    }
+    go(0, Map.empty)
+  }
+
   def main(args: Array[String]): Unit = {
     twoSum(Array(2, 2, 1, 4), 4) shouldEqual Array(0, 1)
     twoSum(Array(2, 2, 1, 4), 3) shouldEqual Array(0, 2)
 
     v2(Array(2, 2, 1, 4), 4) shouldEqual Array(0, 1)
     v2(Array(2, 2, 1, 4), 3) shouldEqual Array(0, 2)
+
+    v4(Array(2, 2, 1, 4), 4) shouldEqual Array(0, 1)
+    v4(Array(2, 2, 1, 4), 3) should (be(Array(0, 2)) or be(Array(1, 2)))
   }
 }
