@@ -63,6 +63,11 @@ object AddBinary extends Test {
     res.mkString
   }
 
+  def v3(c: String, d: String): String = {
+    val bigInt = BigInt(c, 2) + BigInt(d, 2)
+    bigInt.toString(2)
+  }
+
   def main(args: Array[String]): Unit = {
     value("110") should be(6)
     value("111") should be(7)
@@ -75,5 +80,8 @@ object AddBinary extends Test {
     v2("1", "1") should be("10")
     v2("10", "1") should be("11")
     v2("10", "10") should be("100")
+    v3("1", "1") should be("10")
+    v3("10", "1") should be("11")
+    v3("10", "10") should be("100")
   }
 }
